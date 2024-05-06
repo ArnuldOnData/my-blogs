@@ -1,0 +1,23 @@
+#
+FROM debian:bookworm
+ENV DEBIAN_FRONTEND noninteractive
+
+RUN apt-get update && \
+    apt-get upgrade -y && \ 
+    apt-get install apt-utils openssh-server rsyslog vim nano -y  && \
+    apt-get install python-is-python3 python-dev-is-python3 -y
+ 
+RUN mkdir -p /root/.ssh
+COPY target-node-ssh-private.key /root/.ssh/id_ed25519
+COPY target-node-ssh-public.key /root/.ssh/id_ed25519.pub
+COPY control-node-ssh-public.key /root/.ssh/authorized_keys
+COPY control-node-ssh-public.key /root/.ssh/known_hosts
+
+COPY bashrc.txt /root/.bashrc
+
+# Fix Ansible Error
+# Replace "Subsystem sftp /usr/lib/openssh/sftp-server" with "Subsystem sftp internal-sftp"
+RUN sed -i 's|Subsystem\s\+sftp\s\+/usr/lib/openssh/sftp-server|Subsystem sftp internal-sftp|' /etc/ssh/sshd_config
+
+
+WORKDIR /root

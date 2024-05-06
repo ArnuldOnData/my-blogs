@@ -1,0 +1,1 @@
+This is just a sample file to check whether my ansible playbook copies or not. If you are seeing this on target nodes then ansible playbook has succeeded

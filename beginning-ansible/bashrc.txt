@@ -1,0 +1,5 @@
+# 
+alias ls="ls --color -F"
+chmod -c 600 /root/.ssh/id_ed25519
+service ssh start
+

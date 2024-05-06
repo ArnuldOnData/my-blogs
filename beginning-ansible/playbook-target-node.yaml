@@ -1,0 +1,58 @@
+---
+- name: for_developers
+  hosts: target_nodes
+  tasks:
+    - name: Update package cache
+      apt:
+        update_cache: yes
+
+    - name: Upgrade packages
+      apt:
+        upgrade: yes
+
+    - name: Install required packages
+      apt:
+        name: "{{ item }}"
+        state: present
+      with_items:
+        - build-essential
+        - htop
+        - iproute2
+        - iputils-ping
+        - gpg
+        - lshw
+        - pciutils
+        - dbus
+        - nginx
+
+    - name: Remove unnecessary packages
+      apt:
+        autoremove: yes
+
+    - name: Start services
+      service:
+        name: "{{ item }}"
+        state: started
+      loop:
+        - dbus
+        - nginx
+   
+    - name: Status of these services using direct commands
+      command:
+        cmd: "{{ item }}"
+      loop:
+        -  service nginx status
+        -  service dbus status
+      register: service_status
+    
+    - name: Raise error if service is not running
+      fail:
+        msg: Service "{{ item.item }}" is not running --> "{{ item.stdout }}"
+      loop: "{{ service_status.results }}"
+      when: "'failed!' in item.stdout"
+
+    - name: Copy file from controller
+      copy:
+        src: "/root/for-ansible/sample-file-to-copy.txt"
+        dest: "/root"
+

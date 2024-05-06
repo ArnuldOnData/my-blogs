@@ -1,0 +1,14 @@
+# Taken from Ansible Docs
+# https://docs.ansible.com/ansible/latest/getting_started/get_started_playbook.html
+# Check Ansible Docs license for usage:
+# https://github.com/ansible/ansible-documentation/blob/devel/COPYING
+#
+- name: My first play
+  hosts: target_nodes
+  tasks:
+   - name: Ping my hosts
+     ansible.builtin.ping:
+
+   - name: Print message
+     ansible.builtin.debug:
+      msg: Hello world
